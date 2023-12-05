@@ -7,5 +7,5 @@ class Article(models.Model) :
     
 class Feedback(models.Model) : 
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
-    is_correct = models.BooleanField(default=True) 
+    label = models.IntegerField(default=0) 
     

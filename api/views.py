@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from rest_framework import generics, status
-from .serializers import ArticleSerializer, CreateArticleSerializer
-from .models import Article
+from .serializers import ArticleSerializer, CreateArticleSerializer, FeedbackSerializer
+from .models import Article, Feedback
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .SavedModel.preprocessing import Preprocessing
 from .SavedModel.predict import Predict
 from .SavedModel.explainable import Explain
+from django.db import IntegrityError
 
 # Create your views here.
 
@@ -33,18 +34,14 @@ class PredictArticleView(APIView) :
     serializer_class = CreateArticleSerializer
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data) 
+        # print(serializer)
         if serializer.is_valid() :
             title = serializer.data.get('title')
             content = serializer.data.get('content')
             model = serializer.data.get('model')
             print(model)
-            # print(f"title:{title}, content:{content}")
-            
             prediction = Predict(content,model)
             print(prediction)
-            # explainable_weights = Explain(content,model)
-            # explainable_weights = []
-            # print(explainable_weights)
             response_data = {'prediction' : prediction}
             return Response(response_data, status=status.HTTP_200_OK)
         
@@ -64,4 +61,32 @@ class ExplainArticleView(APIView) :
             return Response(response_data, status=status.HTTP_200_OK) 
         
         return Response(status=status.HTTP_400_BAD_REQUEST) 
+
+class FeedbackArticleView(APIView) : 
+    serializer_class = FeedbackSerializer
+    def post(self, request, format=None) : 
+        serializer = self.serializer_class(data=request.data) 
+      
+        if serializer.is_valid():
+            title = serializer.data['article']['title']
+            content = serializer.data['article']['content']
+            label = serializer.data['label']
+
+            article, created = Article.objects.get_or_create(
+                title = title,
+                content = content,
+                defaults={'title': title, 'content': content}
+            )
+
+            feedback = Feedback(article_id=article.id, label=label)
+            feedback.save()
+
+            response_data = {
+                'article': {'title': title, 'content': content},
+                'label': label
+            }
+            return Response(response_data, status=status.HTTP_200_OK)
     
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            

@@ -112,7 +112,7 @@ const HomePage = () => {
         {/* right column */}
         <div class="w-full xl:w-3/5 p-12 pt-0 overflow-hidden">
           {/* <img class="mx-auto w-full md:w-4/5 transform -rotate-6 transition hover:scale-105 duration-700 ease-in-out hover:rotate-6" src='.../static/images/macbook.svg' /> */}
-          <Result result={result} isLoading={isLoading} showModal={showModal} toggleModal={toggleModal} activeButton={activeButton} setActiveButton={setActiveButton} setFormData={setFormData}/>
+          <Result result={result} isLoading={isLoading} showModal={showModal} toggleModal={toggleModal} activeButton={activeButton} setActiveButton={setActiveButton} formData={formData} setFormData={setFormData}/>
         </div>
 
         {/* <div class="mx-auto md:pt-16">

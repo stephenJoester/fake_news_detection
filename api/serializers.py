@@ -13,8 +13,8 @@ class CreateArticleSerializer(serializers.ModelSerializer) :
         fields = ('title','content','model')
         
 class FeedbackSerializer(serializers.ModelSerializer) :
-    article = CreateArticleSerializer() 
-    is_correct = serializers.BooleanField()
+    article = serializers.DictField()
+    label = serializers.IntegerField()
     class Meta: 
         model = Feedback
-        fields = ('article','is_correct') 
+        fields = ('article','label') 
