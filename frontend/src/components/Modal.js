@@ -26,7 +26,7 @@ export default function Modal({showModal, toggleModal, formData, weights, setWei
       sendRequest()
       setMaxWeight(Math.max(...weights.map(weight => Math.abs(weight[1]))))
     }
-  }, [showModal])
+  }, [showModal, weights])
 
   // console.log(weights);
   const colorMatchingReal = (weight) => {
@@ -55,6 +55,32 @@ export default function Modal({showModal, toggleModal, formData, weights, setWei
     }
     else return "bg-blue-200"
   }
+  const colorMatchingTruewFalse = (weight) => {
+    const ratio = weight/maxWeight
+    if (ratio >= 0.6) {
+      return "bg-indigo-500"
+    }
+    else if (ratio >= 0.4) {
+      return "bg-indigo-400"
+    }
+    else if (ratio >= 0.2) {
+      return "bg-indigo-300"
+    }
+    else return "bg-indigo-200"
+  }
+  const colorMatchingFalsewTrue = (weight) => {
+    const ratio = weight/maxWeight
+    if (ratio >= 0.6) {
+      return "bg-lime-500"
+    }
+    else if (ratio >= 0.4) {
+      return "bg-lime-400"
+    }
+    else if (ratio >= 0.2) {
+      return "bg-lime-300"
+    }
+    else return "bg-lime-200"
+  }
   return (
     <>
       {showModal ? (
@@ -62,7 +88,7 @@ export default function Modal({showModal, toggleModal, formData, weights, setWei
         <div
           className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
         >
-          <div className="relative w-auto my-6 mx-auto max-w-3xl">
+          <div className="relative w-auto my-6 mx-auto max-w-4xl">
             {/*content*/}
             <div className="border-0 rounded-2xl shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none max-h-screen">
               {/*header*/}
@@ -83,21 +109,21 @@ export default function Modal({showModal, toggleModal, formData, weights, setWei
                   </div>
                 </div>
                 
-              ) : (
+              ) : (result == 0 || result == 1) ? (
                 <div className="flex flex-wrap max-w-screen">
                   {/* legend */}
                   <div className="w-1/4">
                     <div className="grid grid-cols-5 grid-rows-2 gap-4 mt-4">
                       {/* row 1 */}
                       <div class="col-span-2 row-span-1 text-center flex justify-center items-center">
-                        <p className="text-black text-lg font-semibold">{result==2 ? "Real" : "Not Fake"}</p>
+                        <p className="text-black text-lg font-semibold">{result==0 ? "Real" : "Not Fake"}</p>
                       </div>
                       <div class="col-span-3 row-span-1 flex justify-start">
                         <div className="aspect-[2/1] bg-orange-500 border-stone-500 border-[3px] border-solid"></div>
                       </div>
                       {/* row 2 */}
                       <div class="col-span-2 row-span-1 text-center flex justify-center items-center">
-                        <p className="text-black text-lg font-semibold">{result==0 ? "Fake" : "Not Real"}</p>
+                        <p className="text-black text-lg font-semibold">{result==1 ? "Fake" : "Not Real"}</p>
                       </div>
                       <div class="col-span-3 row-span-1 flex justify-start">
                         <div className="aspect-[2/1] bg-blue-500 border-stone-500 border-[3px] border-solid"></div>
@@ -111,7 +137,45 @@ export default function Modal({showModal, toggleModal, formData, weights, setWei
                         {weights.map((weight, index) => <>
                           <span
                           key={index}
-                          className={(weights[index][1] > 0 && result == 2) || (weights[index][1] < 0 && result == 0) ? colorMatchingReal(weights[index][1]) : colorMatchingFake(weights[index][1])}
+                          className={(weights[index][1] > 0 && result == 0) || (weights[index][1] < 0 && result == 1) ? colorMatchingReal(weights[index][1]) : colorMatchingFake(weights[index][1])}
+                          title={weights[index][1]}
+                          >
+                            {weight[0] + " "} 
+                          </span> 
+                        </>
+                        )}
+                    </p>  
+                  </div> 
+                </div>
+              ) : (
+                <div className="flex flex-wrap max-w-full whitespace-nowrap">
+                  {/* legend */}
+                  <div className="w-1/4 max-w-full">
+                    <div className="grid grid-cols-5 grid-rows-2 gap-4 mt-4">
+                      {/* row 1 */}
+                      <div class="col-span-4 row-span-1 text-center flex justify-center items-center">
+                        <p className="text-black text-lg font-semibold">{result==2 ? "Real-w-Fake" : "Not Fake-w-Real"}</p>
+                      </div>
+                      <div class="col-span-1 row-span-1 flex justify-end">
+                        <div className="aspect-[2/1] bg-indigo-500 border-stone-500 border-[3px] border-solid"></div>
+                      </div>
+                      {/* row 2 */}
+                      <div class="col-span-4 row-span-1 text-center flex justify-center items-center">
+                        <p className="text-black text-lg font-semibold">{result==3 ? "Fake-w-Real" : "Not Real-w-Fake"}</p>
+                      </div>
+                      <div class="col-span-1 row-span-1 flex justify-end">
+                        <div className="aspect-[2/1] bg-lime-500 border-stone-500 border-[3px] border-solid"></div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* highlighted text */}
+                  <div className="w-3/4 max-h-[30rem] overflow-auto pl-4">
+                    <p className="my-4 text-black text-lg leading-relaxed whitespace-pre-wrap">
+                        {weights.map((weight, index) => <>
+                          <span
+                          key={index}
+                          className={(weights[index][1] > 0 && result == 2) || (weights[index][1] < 0 && result == 3) ? colorMatchingTruewFalse(weights[index][1]) : colorMatchingFalsewTrue(weights[index][1])}
                           title={weights[index][1]}
                           >
                             {weight[0] + " "} 

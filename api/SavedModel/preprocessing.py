@@ -1,18 +1,27 @@
 import re
 import string
+import numpy as np
 from pyvi import ViTokenizer
 from keras.preprocessing.text import tokenizer_from_json
 from keras.preprocessing.sequence import pad_sequences
+from gensim.models.doc2vec import Doc2Vec
+from transformers import AutoTokenizer
 
-with open('api/SavedModel/tokenizer_4_class.json', 'r') as json_file:
-    loaded_tokenizer_json = json_file.read()
 
-loaded_tokenizer = tokenizer_from_json(loaded_tokenizer_json)
-analyzer = lambda text : text.strip().split(' ')
-loaded_tokenizer.num_words=10000
-loaded_tokenizer.split = ' '
-loaded_tokenizer.oov_token="<OOV>"
-loaded_tokenizer.analyzer=analyzer
+# with open('api/SavedModel/tokenizer_4_class.json', 'r') as json_file:
+#     loaded_tokenizer_json = json_file.read()
+
+# loaded_tokenizer = tokenizer_from_json(loaded_tokenizer_json)
+# analyzer = lambda text : text.strip().split(' ')
+# loaded_tokenizer.num_words=10000
+# loaded_tokenizer.split = ' '
+# loaded_tokenizer.oov_token="<OOV>"
+# loaded_tokenizer.analyzer=analyzer
+
+bert_tokenizer = AutoTokenizer.from_pretrained("vinai/phobert-base-v2")
+
+# load doc2vec
+d2v = Doc2Vec.load('api/SavedModel/dbow.h5')
 
 # List of stop words
 stop_words = list()
@@ -56,6 +65,24 @@ def clean_text_round3(text):
     return text
 
 def clean_text_round4(text):
+    '''remove links'''
+    # Define a regular expression pattern for matching links
+    link_pattern = re.compile(r'https?://\S+|www\.\S+')
+
+    # Use sub to replace links with an empty string
+    cleaned_text = re.sub(link_pattern, '', text)
+
+    return cleaned_text
+
+# def clean_text_round5(text) : 
+#     '''Word segmentation'''
+#     result = rdrsegmenter.word_segment(str(text))
+#     if len(result) > 0:
+#         return result[0]
+#     else:
+#         return ''
+    
+def clean_text_round6(text):
     '''Remove stop words'''
     # Create a regex pattern to match stop words
     pattern = r'\b(?:' + '|'.join(map(re.escape, stop_words)) + r')\b'
@@ -68,16 +95,18 @@ round2 = lambda x: clean_text_round2(x)
 round3 = lambda x: clean_text_round3(x)
 round4 = lambda x: clean_text_round4(x)
 round5 = lambda x: ViTokenizer.tokenize(str(x))
+round6 = lambda x: clean_text_round6(x)
 
-def clean_text_r123(text) : 
+def clean_text_r1234(text) : 
     text = round1(text)
     text = round2(text)
     text = round3(text)
+    text = round4(text)
     return text
 
-def clean_text_r45(text) : 
-    text = round4(text)  
-    text = round5(text) 
+def clean_text_r56(text) : 
+    text = round5(text)  
+    text = round6(text) 
     return text
 
 title = 'Hà Nội hỗ trợ các nạn nhân vụ cháy chung cư mini hơn 9,2 tỷ đồng'
@@ -89,14 +118,46 @@ def Preprocessing(content) :
     content = clean_text_round3(content) 
     content = clean_text_round4(content) 
     content = ViTokenizer.tokenize(str(content))
+    # content = clean_text_round5(content) 
+    content = clean_text_round6(content) 
     
-    content = loaded_tokenizer.texts_to_sequences([content]) 
-    padded_content = pad_sequences(content, maxlen=512, truncating='post', padding='post') 
-    return padded_content
+    # content = loaded_tokenizer.texts_to_sequences([content]) 
+    # padded_content = pad_sequences(content, maxlen=512, truncating='post', padding='post') 
+    
+    content = np.array([d2v.infer_vector(content.split(' '))])
+    content = np.reshape(content, (content.shape[0], 1, content.shape[1]))
+    return content
 
-def tokenizer(list_data) :
-    data = loaded_tokenizer.texts_to_sequences(list_data) 
-    padded_data = pad_sequences(data, maxlen=512, truncating='post', padding='post')
-    return padded_data
+def tokenizerLSTM(list_data) :
+    data = np.array([d2v.infer_vector(doc.split(' ')) for doc in list_data])
+    processed_data = np.reshape(data, (data.shape[0], 1, data.shape[1]))
+    return processed_data
+
+def tokenizerBERT(list_data) : 
+    ids = np.zeros((len(list_data), 256))
+    masks = np.zeros((len(list_data), 256))
+    for i, text in enumerate(list_data) : 
+        inputs = bert_tokenizer.encode_plus(text, truncation=True, padding='max_length', max_length=256, return_tensors='tf', add_special_tokens=True)
+        ids[i, :] = inputs.input_ids
+        masks[i, :] = inputs.attention_mask
+    return ids, masks
  
+def PreprocessingBERT(content) : 
+    content = clean_text_round1(content) 
+    content = clean_text_round2(content) 
+    content = clean_text_round3(content) 
+    content = clean_text_round4(content) 
+    content = ViTokenizer.tokenize(str(content))
+    # content = clean_text_round5(content) 
+    content = clean_text_round6(content) 
+    
+    inputs = bert_tokenizer.encode_plus(content, truncation=True, padding='max_length', max_length=256, return_tensors='tf', add_special_tokens=True)
+    ids = inputs.input_ids
+    masks = inputs.attention_mask
+    
+    return ids, masks
+    
+    
+    
+    
     
