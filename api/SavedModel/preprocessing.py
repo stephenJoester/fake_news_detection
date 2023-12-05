@@ -21,11 +21,11 @@ from transformers import AutoTokenizer
 bert_tokenizer = AutoTokenizer.from_pretrained("vinai/phobert-base-v2")
 
 # load doc2vec
-d2v = Doc2Vec.load('api/SavedModel/dbow.h5')
+d2v = Doc2Vec.load('api/SavedModel/Models/dbow.h5')
 
 # List of stop words
 stop_words = list()
-with open('api/SavedModel/vietnamese-stopwords-dash.txt', 'r',encoding='utf-8') as file:
+with open('api/SavedModel/Tokenizers/vietnamese-stopwords-dash.txt', 'r',encoding='utf-8') as file:
     lines = file.readlines()
     stop_words = [line.strip() for line in lines]
 

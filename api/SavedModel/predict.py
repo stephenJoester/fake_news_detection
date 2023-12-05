@@ -3,9 +3,9 @@ from .preprocessing import Preprocessing, PreprocessingBERT
 from transformers import TFRobertaMainLayer
 import numpy as np
 # Tải model đã lưu
-model_LSTM = load_model("api/SavedModel/lstm_doc2vec_4_class.h5")
-model_biLSTM = load_model("api/SavedModel/bi_lstm_doc2vec_4_class.h5")
-model_phoBERT = load_model("api/SavedModel/PhoBert_4_class_80.h5", custom_objects={'TFRobertaMainLayer':TFRobertaMainLayer})
+model_LSTM = load_model("api/SavedModel/Models/lstm_doc2vec_4_class.h5")
+model_biLSTM = load_model("api/SavedModel/Models/bi_lstm_doc2vec_4_class.h5")
+model_phoBERT = load_model("api/SavedModel/Models/PhoBert_4_class_80.h5", custom_objects={'TFRobertaMainLayer':TFRobertaMainLayer})
         
 
 def sigmoid(x):
