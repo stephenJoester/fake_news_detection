@@ -1,0 +1,1 @@
+web: gunicorn fake_news_detection.wsgi --log-file -
