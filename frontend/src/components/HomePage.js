@@ -4,7 +4,6 @@ import Result from './Result'
 import Modal from './Modal'
 
 const HomePage = () => {
-  // 2 -> chưa dự đoán
   const [result, setResult] = useState(null) 
   const [isLoading, setIsLoading] = useState(false)
   const [showModal, setShowModal] = useState(false)
@@ -12,7 +11,7 @@ const HomePage = () => {
   const [weights, setWeights] = useState([])
   const [activeButton, setActiveButton] = useState('biLSTM')
   const [formData, setFormData] = useState({title:'title',content:'',model:activeButton})
-  const test = ""
+ 
   // const testWeights = [
   //   [
   //       "Chính phủ vừa ban hành Nghị quyết phiên họp Chính phủ thường kỳ tháng 6 năm 2023 và Hội nghị trực tuyến Chính phủ với địa phương.",
@@ -93,7 +92,7 @@ const HomePage = () => {
   }
   return (
     <div class="container pt-12 md:pt-20 mx-auto flex flex-wrap flex-col md:flex-row items-center">
-        <Modal showModal={showModal} toggleModal={toggleModal} content={content} weights={weights} result={result}/>
+        <Modal showModal={showModal} toggleModal={toggleModal} content={content} weights={weights} result={result} formData={formData} setWeights={setWeights}/>
         {/* left column */}
         <div class="flex flex-col w-full xl:w-2/5 justify-center lg:items-start overflow-y-hidden">
           <h1 class="my-4 text-3xl md:text-5xl text-white opacity-75 font-bold leading-tight text-center md:text-left">

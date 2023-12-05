@@ -7,6 +7,7 @@ const Form = ({result, updateResult, isLoading, setIsLoading, setWeights, active
     const handleSubmit = async (e) => {
         e.preventDefault() 
         setIsLoading(true)
+        setWeights([])
         console.log(activeButton);
         // setFormData(prevFormData => ({...prevFormData, model: activeButton}));
         console.log(formData);
@@ -16,10 +17,6 @@ const Form = ({result, updateResult, isLoading, setIsLoading, setWeights, active
             // console.log(response.data.prediction[0]);
             result = response.data.prediction[0]
             updateResult(result)
-
-            const weights = response.data.explainable_weights 
-            // console.log(weights) 
-            setWeights(weights)
 
         
         } catch (error) {

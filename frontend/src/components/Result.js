@@ -6,6 +6,8 @@ const Result = ({result, isLoading, showModal,toggleModal, activeButton, setActi
         setActiveButton(buttonId)
         setFormData(prevFormData => ({...prevFormData, model: buttonId}));
     }
+
+    
   return (
     <div className='bg-gray-900 opacity-75 w-full shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4 text-center max-h-screen overflow-auto'>
         <div className='flex justify-start'>

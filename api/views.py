@@ -42,10 +42,26 @@ class PredictArticleView(APIView) :
             
             prediction = Predict(content,model)
             print(prediction)
-            explainable_weights = Explain(content,model)
+            # explainable_weights = Explain(content,model)
             # explainable_weights = []
             # print(explainable_weights)
-            response_data = {'prediction' : prediction, 'explainable_weights' : explainable_weights}
+            response_data = {'prediction' : prediction}
             return Response(response_data, status=status.HTTP_200_OK)
         
         return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+class ExplainArticleView(APIView) : 
+    serializer_class = CreateArticleSerializer
+    def post(self, request, format=None) : 
+        serializer = self.serializer_class(data=request.data) 
+        if serializer.is_valid() : 
+            title = serializer.data.get('title') 
+            content = serializer.data.get('content') 
+            model = serializer.data.get('model') 
+            
+            explainable_weights = Explain(content,model) 
+            response_data = {'weights' : explainable_weights} 
+            return Response(response_data, status=status.HTTP_200_OK) 
+        
+        return Response(status=status.HTTP_400_BAD_REQUEST) 
+    
