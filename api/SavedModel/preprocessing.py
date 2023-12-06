@@ -21,7 +21,7 @@ from transformers import AutoTokenizer
 bert_tokenizer = AutoTokenizer.from_pretrained("vinai/phobert-base-v2")
 
 # load doc2vec
-d2v = Doc2Vec.load('api/SavedModel/Models/dbow.h5')
+d2v = Doc2Vec.load('api/SavedModel/Tokenizers/dbow.h5')
 
 # List of stop words
 stop_words = list()
@@ -125,6 +125,7 @@ def Preprocessing(content) :
     # padded_content = pad_sequences(content, maxlen=512, truncating='post', padding='post') 
     
     content = np.array([d2v.infer_vector(content.split(' '))])
+    print('No error')
     content = np.reshape(content, (content.shape[0], 1, content.shape[1]))
     return content
 

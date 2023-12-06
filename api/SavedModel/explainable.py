@@ -1,7 +1,7 @@
 from lime.lime_text import LimeTextExplainer
 from keras.models import load_model
 from .preprocessing import Preprocessing, clean_text_r1234, clean_text_r56, tokenizerLSTM, tokenizerBERT
-from .predict import Predict, predict_prob_biLSTM, predict_prob_BERT
+from .predict import Predict, predict_prob_biLSTM, predict_prob_BERT, predict_prob_LSTM
 import nltk
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -54,6 +54,16 @@ def classifier_prob_biLSTM(list_samples) :
         
     processed_data = tokenizerLSTM(list_samples) 
     preds = predict_prob_biLSTM(processed_data)
+    return preds
+
+def classifier_prob_LSTM(list_samples) : 
+    for i in range(len(list_samples)) :
+        list_sentence = list_samples[i].split(' ') 
+        list_sentence = [sentence.replace(SEP, ' ') for sentence in list_sentence]
+        list_samples[i] = clean_text_r56(' '.join(list_sentence)) 
+        
+    processed_data = tokenizerLSTM(list_samples) 
+    preds = predict_prob_LSTM(processed_data)
     return preds
 
 def classifier_prob_BERT(list_samples) : 
