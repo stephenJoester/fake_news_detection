@@ -5,6 +5,7 @@ from .predict import Predict, predict_prob_biLSTM, predict_prob_BERT, predict_pr
 import nltk
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.metrics.pairwise import cosine_similarity
+import time
 
 explainer = LimeTextExplainer(class_names=['Fake news', 'Real news'])
 

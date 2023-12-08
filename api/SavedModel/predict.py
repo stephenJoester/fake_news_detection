@@ -1,9 +1,9 @@
 from keras.models import load_model
 from .preprocessing import Preprocessing, PreprocessingBERT
-from transformers import TFRobertaMainLayer
 import numpy as np
 import json
 import requests
+import time
 
 # Tải model đã lưu
 # model_LSTM = load_model("api/SavedModel/Models/lstm_doc2vec_4_class.h5")
@@ -16,6 +16,7 @@ def sigmoid(x):
 
 def Predict(content, model) :
     prediction = []
+    time_start = time.time()
     if model == "biLSTM" : 
         api_url = "http://localhost:8100/v1/models/biLSTM:predict"
         processed_content = Preprocessing(content)
@@ -66,6 +67,8 @@ def Predict(content, model) :
     print(prediction)
     # classes = ['True', 'False', 'True-w-false', 'False-w-true']
     prediction = np.argmax(prediction, axis=1)
+    time_end = time.time()
+    print("Execution time: {:.2f} seconds".format(time_end-time_start))
     return prediction
 
 def predict_prob_biLSTM(data) :  
@@ -79,7 +82,7 @@ def predict_prob_biLSTM(data) :
         result = response.json()
         preds = result['predictions']
         preds = np.array(preds)
-        print(preds.shape)
+        # print(preds.shape)
     else : 
         print("Error:", response.status_code, response.text)
       
@@ -97,7 +100,7 @@ def predict_prob_LSTM(data) :
         result = response.json()
         preds = result['predictions']
         preds = np.array(preds)
-        print(preds.shape)
+        # print(preds.shape)
     else : 
         print("Error:", response.status_code, response.text)
       

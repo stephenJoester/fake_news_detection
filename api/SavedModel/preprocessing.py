@@ -125,7 +125,6 @@ def Preprocessing(content) :
     # padded_content = pad_sequences(content, maxlen=512, truncating='post', padding='post') 
     
     content = np.array([d2v.infer_vector(content.split(' '))])
-    print('No error')
     content = np.reshape(content, (content.shape[0], 1, content.shape[1]))
     return content
 

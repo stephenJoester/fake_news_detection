@@ -24,6 +24,9 @@ export default function Modal({showModal, toggleModal, formData, weights, setWei
   useEffect(() => {
     if (showModal && weights.length === 0) {
       sendRequest()
+      
+    }
+    else {
       setMaxWeight(Math.max(...weights.map(weight => Math.abs(weight[1]))))
     }
   }, [showModal, weights])
@@ -115,17 +118,17 @@ export default function Modal({showModal, toggleModal, formData, weights, setWei
                   <div className="w-1/4">
                     <div className="grid grid-cols-5 grid-rows-2 gap-4 mt-4">
                       {/* row 1 */}
-                      <div class="col-span-2 row-span-1 text-center flex justify-center items-center">
+                      <div class="col-span-2 row-span-1 text-center flex justify-end items-center">
                         <p className="text-black text-lg font-semibold">{result==0 ? "Real" : "Not Fake"}</p>
                       </div>
-                      <div class="col-span-3 row-span-1 flex justify-start">
+                      <div class="col-span-3 row-span-1 flex justify-end">
                         <div className="aspect-[2/1] bg-orange-500 border-stone-500 border-[3px] border-solid"></div>
                       </div>
                       {/* row 2 */}
-                      <div class="col-span-2 row-span-1 text-center flex justify-center items-center">
+                      <div class="col-span-2 row-span-1 text-center flex justify-end items-center">
                         <p className="text-black text-lg font-semibold">{result==1 ? "Fake" : "Not Real"}</p>
                       </div>
-                      <div class="col-span-3 row-span-1 flex justify-start">
+                      <div class="col-span-3 row-span-1 flex justify-end">
                         <div className="aspect-[2/1] bg-blue-500 border-stone-500 border-[3px] border-solid"></div>
                       </div>
                     </div>
