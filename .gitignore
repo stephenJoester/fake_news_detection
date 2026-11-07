@@ -1,0 +1,19 @@
+
+*.sqlite3
+
+Dockerfile
+
+# Large model files (kept locally only, not in git/LFS)
+api/SavedModel/Models/*/
+*.h5
+
+# Python caches
+__pycache__/
+*.pyc
+
+# Virtual environments
+env/
+venv/
+
+# Node dependencies and build caches
+node_modules/
